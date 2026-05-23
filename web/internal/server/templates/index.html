@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>netparent — dashboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>netparent</h1>
+    <div class="topbar-right">
+      <span class="muted">signed in as <strong>{{ .User }}</strong></span>
+      <form method="post" action="/logout" style="display:inline">
+        <button class="link" type="submit">Sign out</button>
+      </form>
+    </div>
+  </header>
+
+  <main class="container">
+    <section>
+      <header class="section-header">
+        <h2>Routers</h2>
+        <button id="refresh-btn" type="button">Refresh</button>
+      </header>
+      <div id="routers"></div>
+    </section>
+
+    <section id="devices-section" hidden>
+      <header class="section-header">
+        <h2>Devices on <span id="current-router-id"></span></h2>
+        <span class="muted" id="devices-updated"></span>
+      </header>
+      <table id="devices-table">
+        <thead>
+          <tr>
+            <th>Hostname</th>
+            <th>MAC</th>
+            <th>IP</th>
+            <th>Last seen</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

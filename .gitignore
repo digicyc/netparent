@@ -1,0 +1,26 @@
+# Build artifacts
+build/
+*.o
+*.a
+*.so
+netparent
+netparentctl
+
+# OpenWRT SDK artifacts
+openwrt/ipkg-*/
+openwrt/.pkgdir/
+openwrt/*.ipk
+
+# Editor / OS
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+
+# Local secrets (never commit your TLS keys!)
+*.pem
+*.key
+*.crt
+!docs/**/*.crt
+secrets/
