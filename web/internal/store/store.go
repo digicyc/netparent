@@ -10,12 +10,15 @@ import (
 )
 
 type Device struct {
-	MAC           string `json:"mac"`
-	IP            string `json:"ip"`
-	Hostname      string `json:"hostname"`
-	Blocked       bool   `json:"blocked"`
-	LeaseExpires  int64  `json:"lease_expires"`
-	LastSeen      int64  `json:"last_seen"`
+	MAC          string `json:"mac"`
+	IP           string `json:"ip"`
+	Hostname     string `json:"hostname"`
+	Blocked      bool   `json:"blocked"`
+	LeaseExpires int64  `json:"lease_expires"`
+	LastSeen     int64  `json:"last_seen"`
+	// Vendor is populated by the server layer (see oui package) at
+	// response time; it is not part of the MQTT payload from routers.
+	Vendor string `json:"vendor,omitempty"`
 }
 
 type Router struct {

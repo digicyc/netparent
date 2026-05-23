@@ -14,6 +14,7 @@ import (
 
 	"github.com/netparent/web/internal/auth"
 	"github.com/netparent/web/internal/mqttbus"
+	"github.com/netparent/web/internal/oui"
 	"github.com/netparent/web/internal/store"
 )
 
@@ -26,10 +27,11 @@ type Server struct {
 	auth      *auth.Auth
 	store     *store.Store
 	bus       *mqttbus.Bus
+	oui       *oui.Resolver
 	templates *template.Template
 }
 
-func New(a *auth.Auth, s *store.Store, b *mqttbus.Bus) (*Server, error) {
+func New(a *auth.Auth, s *store.Store, b *mqttbus.Bus, o *oui.Resolver) (*Server, error) {
 	tmplFS, err := fs.Sub(assets, "templates")
 	if err != nil {
 		return nil, err
@@ -42,6 +44,7 @@ func New(a *auth.Auth, s *store.Store, b *mqttbus.Bus) (*Server, error) {
 		auth:      a,
 		store:     s,
 		bus:       b,
+		oui:       o,
 		templates: tmpl,
 	}, nil
 }
@@ -127,14 +130,21 @@ func (s *Server) handleAPIDevices(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusNotFound, map[string]string{"error": "router not found"})
 		return
 	}
+	devices := router.DevicesList()
+	// Enrich each device with its OEM. Lookup is non-blocking: it
+	// returns cached value or "" and triggers async fetch on miss, so
+	// vendors appear on the next poll.
+	for _, d := range devices {
+		d.Vendor = s.oui.Lookup(d.MAC)
+	}
 	writeJSON(w, http.StatusOK, map[string]any{
-		"router":  map[string]any{
+		"router": map[string]any{
 			"id":             router.ID,
 			"online":         router.Online,
 			"last_update":    router.LastUpdate,
 			"devices_update": router.DevicesUpdate,
 		},
-		"devices": router.DevicesList(),
+		"devices": devices,
 	})
 }
 

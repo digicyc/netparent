@@ -76,18 +76,19 @@ async function loadDevices() {
       : '';
     renderDevices(devices || []);
   } catch (e) {
-    els.tbody.innerHTML = `<tr><td colspan="6" class="muted">Error loading devices: ${escapeHTML(e.message)}</td></tr>`;
+    els.tbody.innerHTML = `<tr><td colspan="7" class="muted">Error loading devices: ${escapeHTML(e.message)}</td></tr>`;
   }
 }
 
 function renderDevices(devices) {
   if (devices.length === 0) {
-    els.tbody.innerHTML = `<tr><td colspan="6" class="muted">No devices reported yet.</td></tr>`;
+    els.tbody.innerHTML = `<tr><td colspan="7" class="muted">No devices reported yet.</td></tr>`;
     return;
   }
   els.tbody.innerHTML = devices.map(d => `
     <tr>
       <td>${escapeHTML(d.hostname || '—')}</td>
+      <td class="${d.vendor ? '' : 'muted'}">${escapeHTML(d.vendor || 'looking up…')}</td>
       <td><code>${escapeHTML(d.mac)}</code></td>
       <td>${escapeHTML(d.ip || '—')}</td>
       <td class="muted">${formatTime(d.last_seen)}</td>

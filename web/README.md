@@ -8,6 +8,9 @@ over MQTT.
 - Lists every router that has ever published a status message
 - For each router, lists every device (enabled/disabled) and toggles
   internet access with one click
+- Each device is annotated with its **OEM / vendor**, resolved from the
+  MAC's OUI via [maclookup.app](https://maclookup.app) and cached
+  in-memory (one network call per unique vendor, ever)
 - All MQTT traffic goes through the broker that the routers also use
 
 ## Build

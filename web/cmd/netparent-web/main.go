@@ -15,6 +15,7 @@ import (
 	"github.com/netparent/web/internal/auth"
 	"github.com/netparent/web/internal/config"
 	"github.com/netparent/web/internal/mqttbus"
+	"github.com/netparent/web/internal/oui"
 	"github.com/netparent/web/internal/server"
 	"github.com/netparent/web/internal/store"
 )
@@ -46,7 +47,9 @@ func main() {
 		cfg.CookieSecure,
 	)
 
-	srv, err := server.New(a, st, bus)
+	resolver := oui.New()
+
+	srv, err := server.New(a, st, bus, resolver)
 	if err != nil {
 		log.Fatalf("server: %v", err)
 	}
