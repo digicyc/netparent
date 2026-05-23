@@ -25,7 +25,7 @@ define Package/netparent
   CATEGORY:=Network
   TITLE:=MQTT-driven MAC blocker
   URL:=https://example.com/netparent
-  DEPENDS:=+libmosquitto-ssl +libuci +libcjson +nftables-json +ca-bundle
+  DEPENDS:=+libmosquitto-ssl +libuci +cJSON +nftables-json +ca-bundle
 endef
 
 define Package/netparent/description
@@ -39,10 +39,17 @@ define Package/netparent/conffiles
 endef
 
 # Copy our source tree into the build directory before compiling.
+#
+# This Makefile is typically installed into the SDK as
+# package/netparent/Makefile, with a `source` symlink at
+# package/netparent/source pointing at the netparent checkout. That keeps
+# the relative paths below stable regardless of where the checkout lives.
 define Build/Prepare
 	mkdir -p $(PKG_BUILD_DIR)
-	$(CP) ../src $(PKG_BUILD_DIR)/
-	$(CP) ../Makefile $(PKG_BUILD_DIR)/
+	$(CP) ./source/src $(PKG_BUILD_DIR)/
+	$(CP) ./source/Makefile $(PKG_BUILD_DIR)/
+	# Strip any stale host-built artifacts that may live in source/src.
+	find $(PKG_BUILD_DIR) \( -name '*.o' -o -name '*.a' -o -name 'netparent' \) -delete
 endef
 
 define Build/Compile
@@ -58,13 +65,13 @@ define Package/netparent/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/netparent $(1)/usr/sbin/netparent
 
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) ../files/usr/bin/netparentctl $(1)/usr/bin/netparentctl
+	$(INSTALL_BIN) ./source/files/usr/bin/netparentctl $(1)/usr/bin/netparentctl
 
 	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_BIN) ../files/etc/init.d/netparent $(1)/etc/init.d/netparent
+	$(INSTALL_BIN) ./source/files/etc/init.d/netparent $(1)/etc/init.d/netparent
 
 	$(INSTALL_DIR) $(1)/etc/config
-	$(INSTALL_CONF) ../files/etc/config/netparent $(1)/etc/config/netparent
+	$(INSTALL_CONF) ./source/files/etc/config/netparent $(1)/etc/config/netparent
 
 	$(INSTALL_DIR) $(1)/etc/netparent
 endef
