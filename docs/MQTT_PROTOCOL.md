@@ -159,9 +159,14 @@ problem:
 ## Security notes
 
 - All connections are TLS. The router validates the broker certificate
-  using its configured `tls_ca_file`.
+  using its configured `tls_ca_file`. See
+  [MQTT_CERTIFICATES.md](MQTT_CERTIFICATES.md) for how to issue the
+  CA, broker, and client certificates.
 - The broker should be configured with ACLs so that each `device_id`
   can only publish/subscribe under its own `netparent/<device_id>/...`
-  prefix.
-- The web app should authenticate to the broker with a separate
-  username/password (or client cert) from the routers.
+  prefix. See [MOSQUITTO_BROKER.md](MOSQUITTO_BROKER.md) for the full
+  template (it uses `pattern ... %u` rules so adding a router is just
+  "issue a cert with `CN=<device_id>`").
+- The web app authenticates with its own client cert (`CN=netparent-web`)
+  and is granted broader read/write access in the ACL than any
+  individual router.

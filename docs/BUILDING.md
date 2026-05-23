@@ -1,35 +1,19 @@
 # Building netparent
 
-There are two supported build flows: a desktop build for development
-and an OpenWRT SDK build for producing installable `.ipk` packages.
+**The OpenWRT SDK is the only supported build path** for shipping the
+daemon. The standalone `Makefile` at the project root exists only for
+quick syntax checks during development and is not viable on most
+distros — `libuci` is an OpenWRT-specific library that is not packaged
+for Arch, Fedora, or most other general-purpose distros, and even on
+Debian/Ubuntu the daemon can't actually *run* on a workstation because
+it depends on nftables policies, the OpenWRT-style UCI tree, dnsmasq
+leases, and procd.
 
-## 1. Desktop build (for development)
+If you want to iterate on the C code without the SDK, the easiest path
+is to run `gcc -fsyntax-only` against the sources (no real linking
+required); see the project root's `Makefile` for the file list.
 
-On a Debian/Ubuntu/Arch machine, install dependencies:
-
-```sh
-# Debian / Ubuntu
-sudo apt install build-essential pkg-config \
-    libmosquitto-dev libcjson-dev libuci-dev nftables
-
-# Arch
-sudo pacman -S base-devel pkgconf mosquitto cjson libuci nftables
-```
-
-Build:
-
-```sh
-make
-```
-
-This produces `./netparent`. It expects to read its config from UCI
-(`/etc/config/netparent`), so the easiest way to smoke-test is to
-create a minimal config there or run it inside a VM that already has
-an OpenWRT-style UCI layout. For a quick sanity check that just
-exercises the MQTT/JSON path, point `tls_enabled '0'` at a local
-broker.
-
-## 2. OpenWRT SDK build (for producing .ipk)
+## 1. OpenWRT SDK build (for producing .ipk)
 
 Pick the SDK matching your OpenWRT version and target architecture:
 
@@ -70,7 +54,7 @@ scp netparent_*.ipk root@router:/tmp/
 ssh root@router 'opkg install /tmp/netparent_*.ipk'
 ```
 
-## 3. Installation & first run
+## 2. Installation & first run
 
 1. Place your broker CA certificate at `/etc/netparent/ca.crt`
    (and the optional client cert/key if you use mutual TLS).
@@ -89,9 +73,9 @@ ssh root@router 'opkg install /tmp/netparent_*.ipk'
      -m '{"req_id":"hello"}'
    ```
 
-## 4. Cross-compiling for other architectures
+## 3. Cross-compiling for other architectures
 
 The OpenWRT SDK is per-target — to build for additional architectures
 (e.g. `mipsel_24kc` for older devices, `x86_64` for an x86 router),
-download the matching SDK and repeat step 2. The package Makefile
+download the matching SDK and repeat step 1. The package Makefile
 itself is portable across all OpenWRT-supported targets.

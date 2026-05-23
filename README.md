@@ -32,8 +32,8 @@ netparent/
 │   ├── etc/config/      UCI defaults
 │   ├── etc/init.d/      procd init script
 │   └── usr/bin/         netparentctl helper CLI
-├── openwrt/Makefile     OpenWRT package Makefile (build with the SDK)
-├── Makefile             Standalone Makefile (for desktop dev / testing)
+├── openwrt/Makefile     OpenWRT package Makefile — **the real build** (use with the SDK)
+├── Makefile             Standalone Makefile — local syntax/iter only, not for shipping
 ├── web/                 Go admin web app (control panel for the routers)
 └── docs/                Protocol + build documentation
 ```
@@ -47,9 +47,15 @@ The repository has two halves:
 
 ## Quick Start
 
-See [docs/BUILDING.md](docs/BUILDING.md) for cross-compiling with the
-OpenWRT SDK, and [docs/MQTT_PROTOCOL.md](docs/MQTT_PROTOCOL.md) for the
-topic/payload contract the web app must implement.
+| Doc                                                | What it covers                                              |
+| -------------------------------------------------- | ----------------------------------------------------------- |
+| [docs/BUILDING.md](docs/BUILDING.md)               | Building the C daemon via the OpenWRT SDK                   |
+| [docs/MQTT_CERTIFICATES.md](docs/MQTT_CERTIFICATES.md) | Creating the private CA + client/server certs for TLS auth |
+| [docs/MOSQUITTO_BROKER.md](docs/MOSQUITTO_BROKER.md)   | Installing the broker and locking it down with ACLs        |
+| [docs/MQTT_PROTOCOL.md](docs/MQTT_PROTOCOL.md)     | Topic/payload contract between routers and the web app     |
+| [web/README.md](web/README.md)                     | Running the Go admin web app                                |
+
+Typical end-to-end setup order: **certificates → broker → web app → flash routers**.
 
 ## License
 

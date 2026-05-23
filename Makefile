@@ -1,5 +1,14 @@
-# Standalone Makefile — useful for developing on a Linux desktop.
-# For OpenWRT packaging, use openwrt/Makefile with the SDK instead.
+# Standalone Makefile — for quick local iteration only.
+#
+# The real, shippable build uses the OpenWRT SDK; see docs/BUILDING.md
+# and openwrt/Makefile. This file requires libuci-dev, which is only
+# available on Debian/Ubuntu — not on Arch, Fedora, etc. The binary
+# also cannot meaningfully *run* on a workstation (it needs nftables,
+# the OpenWRT UCI tree, procd, and dnsmasq leases).
+#
+# If you just want to syntax-check during development without the SDK:
+#   gcc -fsyntax-only -Wall -Wextra -Isrc src/*.c
+# (against your own stub headers, since libuci isn't widely available).
 
 CC      ?= cc
 PKG_CONFIG ?= pkg-config
